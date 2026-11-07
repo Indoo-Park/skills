@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gastro Atlas 마카오</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080d; --ink:#f4f5fa; --ink2:rgba(244,245,250,.72); --ink3:rgba(244,245,250,.48);
+  --glass:rgba(255,255,255,.07); --glass2:rgba(255,255,255,.12); --line:rgba(255,255,255,.14);
+  --hi:rgba(255,255,255,.28); --accent:#ffb36b; --accent2:#7fd7ff; --good:#7ef0b3; --star:#ffd36b;
+  --r:28px; --shadow:0 30px 80px -20px rgba(0,0,0,.6), 0 8px 24px -8px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+/* ambient spatial background */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55;animation:float 22s ease-in-out infinite}
+.o1{width:520px;height:520px;background:#ff7a3d;top:-140px;left:-120px}
+.o2{width:600px;height:600px;background:#2a6bff;bottom:-220px;right:-160px;animation-delay:-7s}
+.o3{width:380px;height:380px;background:#c04bff;top:40%;left:45%;opacity:.3;animation-delay:-13s}
+.grain{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:3px 3px}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,40px) scale(1.12)}}
+.wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 24px 80px}
+.glass{background:var(--glass);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow),inset 0 1px 0 var(--hi)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+/* top bar */
+.top{position:sticky;top:14px;z-index:20;margin:14px 0 0;display:flex;align-items:center;gap:14px;padding:10px 12px 10px 20px;border-radius:999px}
+.logo{font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.logo i{width:30px;height:30px;border-radius:50%;background:conic-gradient(from 200deg,var(--accent),#ff5d8f,var(--accent2),var(--accent));box-shadow:0 0 20px rgba(255,179,107,.6);display:inline-block}
+.logo small{font-weight:500;color:var(--ink3);font-size:12px;letter-spacing:.12em}
+.cities{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.cities::-webkit-scrollbar{display:none}
+.city{padding:8px 14px;border-radius:999px;font-size:13px;color:var(--ink3);white-space:nowrap;border:1px solid transparent}
+.city.on{background:var(--glass2);color:var(--ink);border-color:var(--line);box-shadow:inset 0 1px 0 var(--hi)}
+.city[disabled]{cursor:not-allowed}
+.favbtn{padding:9px 16px;border-radius:999px;background:linear-gradient(135deg,rgba(255,179,107,.25),rgba(255,93,143,.2));border:1px solid rgba(255,179,107,.4);font-size:13px;font-weight:600;white-space:nowrap}
+/* hero */
+.hero{padding:64px 8px 28px;text-align:center}
+.eyebrow{display:inline-block;font-size:12px;letter-spacing:.2em;color:var(--accent);padding:6px 14px;border-radius:999px;border:1px solid rgba(255,179,107,.35);background:rgba(255,179,107,.08)}
+.hero h1{font-size:clamp(34px,6vw,64px);line-height:1.08;letter-spacing:-.03em;margin:18px 0 14px;font-weight:700}
+.hero h1 span{background:linear-gradient(90deg,#ffd2a3,#ff8fb1 50%,#9fe3ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--ink2);font-size:16px;max-width:620px;margin:0 auto}
+.search{max-width:680px;margin:30px auto 0;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 22px;border-radius:999px}
+.search input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink);font:inherit;font-size:16px;padding:10px 0}
+.search input::placeholder{color:var(--ink3)}
+.search .kbd{font-size:12px;color:var(--ink3);padding:4px 9px;border:1px solid var(--line);border-radius:8px}
+.situ{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px}
+.chip{padding:8px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--ink2);transition:.2s;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.chip:hover{color:var(--ink);background:var(--glass2)}
+.chip.on{background:var(--ink);color:#111;border-color:var(--ink)}
+/* topics */
+.sec-h{display:flex;align-items:end;justify-content:space-between;margin:40px 4px 16px;gap:12px}
+.sec-h h2{font-size:22px;letter-spacing:-.02em}
+.sec-h span{color:var(--ink3);font-size:13px}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;perspective:1200px}
+.topic{padding:20px 18px;text-align:left;border-radius:24px;position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),background .25s,border-color .25s;transform-style:preserve-3d}
+.topic:hover{transform:translateY(-6px) translateZ(20px) rotateX(6deg)}
+.topic .em{font-size:30px;display:block;margin-bottom:12px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45));transform:translateZ(30px)}
+.topic b{display:block;font-size:15px}
+.topic small{color:var(--ink3);font-size:12px}
+.topic::after{content:"";position:absolute;inset:auto -30% -60% auto;width:120px;height:120px;border-radius:50%;background:var(--c,#fff);filter:blur(40px);opacity:.28;transition:.3s}
+.topic.on{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.45)}
+.topic.on::after{opacity:.6}
+/* main layout */
+.main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:22px;align-items:start;margin-top:8px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;border-radius:22px;margin-bottom:16px}
+.bar label{font-size:12px;color:var(--ink3)}
+.sel{appearance:none;-webkit-appearance:none;background:var(--glass2);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 30px 8px 14px;font:inherit;font-size:13px;background-image:linear-gradient(45deg,transparent 50%,var(--ink2) 50%),linear-gradient(135deg,var(--ink2) 50%,transparent 50%);background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.sel option{background:#1a1b22}
+.count{margin-left:auto;font-size:13px;color:var(--ink2)}
+.reset{font-size:13px;color:var(--accent);padding:6px 10px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.card{padding:20px;text-align:left;display:flex;flex-direction:column;gap:12px;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,background .3s;position:relative}
+.card:hover{transform:translateY(-4px);background:rgba(255,255,255,.1);box-shadow:0 40px 90px -24px rgba(0,0,0,.75),inset 0 1px 0 var(--hi)}
+.card.hl{outline:2px solid var(--accent);outline-offset:2px}
+.c-top{display:flex;gap:14px;align-items:center}
+.sig{width:54px;height:54px;flex:none;border-radius:18px;display:grid;place-items:center;font-size:28px;background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.04));border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--hi),0 10px 24px -8px rgba(0,0,0,.5)}
+.c-top h3{font-size:17px;letter-spacing:-.01em;line-height:1.25}
+.c-top .o{font-size:12px;color:var(--ink3);margin-top:2px}
+.fav{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--glass);border:1px solid var(--line);font-size:15px;transition:.2s}
+.fav:hover{background:var(--glass2)}
+.fav.on{background:rgba(255,93,143,.25);border-color:rgba(255,93,143,.6)}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11.5px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--ink2);border:1px solid rgba(255,255,255,.08)}
+.tag.star{color:var(--star);border-color:rgba(255,211,107,.35);background:rgba(255,211,107,.1)}
+.tag.area{color:var(--accent2);border-color:rgba(127,215,255,.3);background:rgba(127,215,255,.08)}
+.desc{font-size:13.5px;color:var(--ink2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mini-menu{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.06)}
+.mm{display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.mm span:last-child{color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
+.c-foot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink3)}
+.c-foot b{color:var(--ink);font-weight:600}
+.more{color:var(--accent2);font-weight:600}
+.empty{padding:40px;text-align:center;color:var(--ink2);grid-column:1/-1}
+/* map */
+.mapbox{position:sticky;top:96px;padding:18px;border-radius:30px}
+.mapbox h3{font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.mapbox h3 small{color:var(--ink3);font-weight:500;font-size:12px}
+.map{margin-top:12px;border-radius:22px;overflow:hidden;background:radial-gradient(120% 80% at 50% 0%,rgba(42,107,255,.25),rgba(0,0,0,.3));border:1px solid rgba(255,255,255,.08);position:relative}
+.map svg{display:block;width:100%;height:auto}
+.dot{cursor:pointer;transition:r .2s}
+.dot:hover{r:8}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;font-size:11.5px;color:var(--ink3)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.maptip{position:absolute;pointer-events:none;padding:6px 10px;border-radius:10px;font-size:12px;background:rgba(10,10,16,.85);border:1px solid var(--line);white-space:nowrap;transform:translate(-50%,-130%);opacity:0;transition:opacity .15s}
+/* tips */
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.tip{padding:20px}
+.tip .em{font-size:24px}
+.tip b{display:block;margin:10px 0 6px;font-size:15px}
+.tip p{font-size:13.5px;color:var(--ink2);line-height:1.6}
+.phr{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:13px;margin-top:6px}
+.phr span:nth-child(even){color:var(--accent2);text-align:right}
+/* detail sheet */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(3,4,8,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:51;left:50%;top:50%;width:min(760px,calc(100% - 24px));max-height:calc(100vh - 40px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.8,.2,1);border-radius:34px;padding:28px;background:rgba(28,30,40,.72)}
+.sheet.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}
+.x{position:sticky;top:0;float:right;width:38px;height:38px;border-radius:50%;background:var(--glass2);border:1px solid var(--line);font-size:18px;z-index:2}
+.d-head{display:flex;gap:18px;align-items:center;margin-bottom:14px}
+.d-head .sig{width:72px;height:72px;font-size:38px;border-radius:24px}
+.d-head h2{font-size:26px;letter-spacing:-.02em}
+.d-head .o{color:var(--ink3);font-size:13px;margin-top:4px}
+.d-desc{color:var(--ink2);line-height:1.7;font-size:15px;margin:14px 0}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.kv{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.kv small{display:block;color:var(--ink3);font-size:12px;margin-bottom:4px}
+.kv b{font-size:15px}
+.d-sec{margin-top:22px}
+.d-sec h4{font-size:14px;color:var(--ink3);letter-spacing:.06em;margin-bottom:10px;font-weight:600}
+.menu-t{border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.mrow{display:grid;grid-template-columns:1fr auto auto;gap:14px;padding:13px 16px;background:rgba(255,255,255,.04);align-items:center;font-size:14.5px}
+.mrow+.mrow{border-top:1px solid rgba(255,255,255,.06)}
+.mrow .p{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
+.mrow .k{color:var(--ink3);font-size:12.5px;font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+.tipbox{padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,179,107,.14),rgba(255,93,143,.08));border:1px solid rgba(255,179,107,.3);font-size:14px;line-height:1.6}
+.near{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.nb{padding:14px;border-radius:18px;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;gap:12px;align-items:center;transition:.2s}
+.nb:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
+.nb .sig{width:42px;height:42px;font-size:22px;border-radius:14px}
+.nb b{font-size:14px;display:block}
+.nb small{color:var(--ink3);font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.btn{padding:12px 18px;border-radius:999px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:var(--glass2);border:1px solid var(--line)}
+.btn.pri{background:linear-gradient(135deg,#ffb36b,#ff6f91);color:#1a0d06;border:0;box-shadow:0 12px 30px -10px rgba(255,111,145,.7)}
+.note{font-size:12px;color:var(--ink3);text-align:center;margin-top:46px;line-height:1.7}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;z-index:60;padding:12px 20px;border-radius:999px;font-size:14px;transition:.3s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:980px){.main{grid-template-columns:1fr}.mapbox{position:relative;top:0;order:-1}.map svg{max-height:340px}}
+@media (max-width:600px){.wrap{padding:0 16px 60px}.top{padding:8px 8px 8px 14px}.logo small{display:none}.hero{padding-top:40px}.d-grid{grid-template-columns:1fr}.sheet{padding:20px;border-radius:28px}.mrow{grid-template-columns:1fr auto}.mrow .k{grid-column:2}.count{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<div class="ambient"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grain"></div></div>
+
+<div class="wrap">
+  <header class="top glass">
+    <div class="logo"><i></i>Gastro Atlas <small>세계 맛집 백과</small></div>
+    <nav class="cities" aria-label="도시 선택">
+      <button class="city on">🇲🇴 마카오</button>
+      <button class="city" disabled title="준비 중">홍콩 · 준비 중</button>
+      <button class="city" disabled title="준비 중">도쿄 · 준비 중</button>
+      <button class="city" disabled title="준비 중">방콕 · 준비 중</button>
+    </nav>
+    <button class="favbtn" id="favToggle">♥ 찜 <span id="favCount">0</span></button>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow">MACAU · 澳門 · 동서양이 만난 미식 도시</span>
+    <h1>오늘 마카오에선<br><span>무엇을 먹을까요?</span></h1>
+    <p>먹고 싶은 주제를 고르면 식당, 대표 메뉴와 가격, 걸어서 갈 수 있는 주변 맛집까지 한 번에 보여 드려요.</p>
+    <div class="search glass">
+      <span aria-hidden="true">🔍</span>
+      <input id="q" type="search" placeholder="식당 · 메뉴 · 지역 검색 (예: 에그타르트, 타이파, 완탕면)" autocomplete="off">
+      <span class="kbd">/</span>
+    </div>
+    <div class="situ" id="situ"></div>
+  </section>
+
+  <div class="sec-h"><h2>무엇이 먹고 싶나요?</h2><span>주제를 누르면 맞춤 식당 목록이 나와요</span></div>
+  <div class="topics" id="topics"></div>
+
+  <div class="sec-h" id="results"><h2 id="resTitle">마카오 전체 맛집</h2><span>카드를 누르면 메뉴판 · 주변 맛집 · 길찾기</span></div>
+  <div class="main">
+    <div>
+      <div class="bar glass">
+        <label for="area">지역</label>
+        <select class="sel" id="area"></select>
+        <label for="price">예산</label>
+        <select class="sel" id="price">
+          <option value="0">전체</option>
+          <option value="1">$ · 1인 MOP 100 이하</option>
+          <option value="2">$$ · MOP 100~300</option>
+          <option value="3">$$$ · MOP 300~600</option>
+          <option value="4">$$$$ · MOP 600 이상</option>
+        </select>
+        <label for="sort">정렬</label>
+        <select class="sel" id="sort">
+          <option value="pick">에디터 추천순</option>
+          <option value="low">가격 낮은순</option>
+          <option value="high">가격 높은순</option>
+        </select>
+        <button class="reset" id="reset">초기화</button>
+        <span class="count" id="count"></span>
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+    <aside class="mapbox glass">
+      <h3>맛집 지도 <small>점을 누르면 상세 정보</small></h3>
+      <div class="map" id="map"><div class="maptip" id="maptip"></div></div>
+      <div class="legend" id="legend"></div>
+    </aside>
+  </div>
+
+  <div class="sec-h"><h2>마카오 미식 여행 꿀팁</h2><span>알고 가면 더 맛있어요</span></div>
+  <div class="tips">
+    <div class="tip glass"><div class="em">💳</div><b>결제 · 환율</b><p>통화는 파타카(MOP). 홍콩달러(HKD)는 대부분 1:1로 받지만 거스름돈은 MOP로 줘요. 노포·길거리 가게는 현금만 받는 곳이 많으니 소액 현금을 챙기세요. 이 사이트의 원화는 1 MOP ≈ 175원 기준 어림값이에요.</p></div>
+    <div class="tip glass"><div class="em">🧾</div><b>봉사료 · 팁</b><p>레스토랑·호텔 식당은 보통 10% 봉사료가 계산서에 포함돼요. 따로 팁을 줄 필요는 없고, 노포·카페는 봉사료가 없어요.</p></div>
+    <div class="tip glass"><div class="em">🚌</div><b>이동 동선</b><p>마카오 반도(세나도 광장) ↔ 타이파 빌리지 ↔ 코타이 ↔ 콜로안 순으로 묶으면 효율적이에요. 호텔·카지노 무료 셔틀버스를 이용하면 반도와 코타이를 공짜로 오갈 수 있어요.</p></div>
+    <div class="tip glass"><div class="em">⏰</div><b>줄 피하는 법</b><p>에그타르트·돼지갈비번 맛집은 오전 일찍 또는 오후 4시 이후가 한산해요. 미쉐린 레스토랑은 2~4주 전 예약, 점심 코스·딤섬이 저녁보다 훨씬 저렴해요.</p></div>
+    <div class="tip glass"><div class="em">🗣️</div><b>주문할 때 쓰는 광둥어</b>
+      <div class="phr"><span>이거 주세요</span><span>呢個唔該 (니꺼 음꺼이)</span><span>계산해 주세요</span><span>埋單 (마이딴)</span><span>맵지 않게</span><span>唔要辣 (음 이우 랏)</span><span>맛있어요!</span><span>好食 (호우 섹)</span></div></div>
+    <div class="tip glass"><div class="em">🍳</div><b>마카니즈 요리란?</b><p>포르투갈과 중국, 아프리카·인도·말레이 향신료가 500년 동안 섞여 탄생한 마카오 고유 요리. 아프리칸 치킨, 민치, 바칼라우는 꼭 한 번 맛보세요. 유네스코 미식 창의도시로 지정된 이유예요.</p></div>
+  </div>
+
+  <p class="note">가격은 2025~2026년 기준 어림값이며 시즌·환율에 따라 달라질 수 있어요. 영업시간·휴무일은 방문 전 '지도에서 열기'로 꼭 확인하세요.<br>Gastro Atlas · 마카오 편 · 다른 도시도 곧 추가됩니다.</p>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<article class="sheet glass" id="sheet" role="dialog" aria-modal="true" aria-label="식당 상세"></article>
+<div class="toast glass" id="toast"></div>
+
+<script>
+const RATE = 175; // 1 MOP ≈ 175 KRW (어림값)
+const CATS = {
+  macanese:{n:"마카니즈",em:"🍛",c:"#ff8a3d",d:"마카오 고유 퓨전 요리"},
+  portuguese:{n:"포르투갈",em:"🐟",c:"#ff5d8f",d:"바칼라우·해산물밥"},
+  tart:{n:"에그타르트·베이커리",em:"🥧",c:"#ffd36b",d:"마카오 대표 간식"},
+  cantonese:{n:"딤섬·광둥요리",em:"🥟",c:"#7ef0b3",d:"딤섬·로스트·해산물"},
+  noodle:{n:"국수·죽",em:"🍜",c:"#7fd7ff",d:"완탕면·게죽"},
+  street:{n:"길거리·간식",em:"🍢",c:"#c38bff",d:"돼지갈비번·육포"},
+  fine:{n:"미쉐린·파인다이닝",em:"⭐",c:"#ffe08a",d:"특별한 날의 한 끼"},
+  dessert:{n:"디저트·카페",em:"🍮",c:"#ffa8c5",d:"우유푸딩·젤라또·커피"}
+};
+const AREAS = {
+  center:"반도 · 세나도 광장/신마로",
+  south:"반도 · 아마사원/남부",
+  north:"반도 · 북부/붉은시장",
+  taipa:"타이파 빌리지",
+  cotai:"코타이 스트립",
+  coloane:"콜로안"
+};
+const SITU = ["혼밥","가성비","데이트","단체","줄서는집","현금만","야식"];
+const PL = ["","$","$$","$$$","$$$$"];
+
+// [메뉴명, 가격(MOP, 숫자 or 문자열)]
+const R = [
+ {id:"litoral",n:"리토랄",o:"Restaurante Litoral · 海灣餐廳",cat:["macanese"],area:"south",lat:22.1868,lng:113.5318,p:3,pp:"250~400",em:"🍛",
+  desc:"마카니즈 요리를 처음 맛본다면 가장 먼저 추천되는 정통 노포. 할머니 레시피 그대로의 아프리칸 치킨과 민치를 맛볼 수 있고, 미쉐린 가이드에도 꾸준히 이름을 올린 곳이에요.",
+  menu:[["아프리칸 치킨 (향신료 코코넛 소스)",190],["민치 (다진 고기·감자 볶음 + 계란)",140],["포르투갈식 오리밥 (Arroz de Pato)",200],["세라두라 (톱밥 푸딩)",50]],
+  tip:"저녁은 예약 권장. 아마사원 관광 후 바로 걸어갈 수 있어요.",tags:["데이트","단체"]},
+ {id:"lorcha",n:"아 로르샤",o:"A Lorcha · 船屋葡國餐廳",cat:["portuguese","macanese"],area:"south",lat:22.1862,lng:113.5311,p:3,pp:"200~350",em:"⛵",
+  desc:"배 모양 아치형 천장이 인상적인 포르투갈 레스토랑. 현지인 가족 모임이 많을 만큼 푸짐하고 안정적인 맛이에요.",
+  menu:[["바칼라우 크로켓",70],["포르투갈식 마늘 조개 볶음",160],["아프리칸 치킨",180],["세라두라",45]],
+  tip:"리토랄과 도보 1분 거리. 한 곳이 만석이면 다른 곳으로 가세요.",tags:["단체","데이트"]},
+ {id:"riquexo",n:"리키쇼",o:"Riquexó · 利多",cat:["macanese"],area:"north",lat:22.1990,lng:113.5468,p:1,pp:"70~120",em:"🍲",
+  desc:"마카니즈 가정식을 뷔페처럼 골라 담는 소박한 식당. 비싼 레스토랑 대신 현지 집밥 같은 마카니즈를 저렴하게 즐길 수 있어요.",
+  menu:[["민치 + 밥",70],["아프리칸 치킨",90],["포르투갈식 커리",80]],
+  tip:"점심 위주 운영이라 일찍 가야 메뉴가 다양해요.",tags:["가성비","혼밥"]},
+ {id:"ali",n:"알리 커리 하우스",o:"Ali Curry House · 亞利咖哩屋",cat:["macanese"],area:"south",lat:22.1858,lng:113.5352,p:2,pp:"120~250",em:"🍛",
+  desc:"남만 호숫가 산책로 옆, 마카니즈식 커리 전문점. 야외 테라스에서 바다 바람 맞으며 먹는 커리가 별미예요.",
+  menu:[["커리 크랩","시가"],["아프리칸 치킨",130],["포르투갈식 소고기 커리",110]],
+  tip:"해 질 무렵 테라스석이 가장 인기예요.",tags:["단체","가성비"]},
+ {id:"clube",n:"클루브 밀리타르",o:"Clube Militar de Macau · 陸軍俱樂部",cat:["portuguese"],area:"center",lat:22.1898,lng:113.5428,p:2,pp:"150~300",em:"🏛️",
+  desc:"1870년 지어진 분홍빛 콜로니얼 건물 속 포르투갈 식당. 클래식한 분위기에 비해 가격이 착하고, 점심 뷔페가 특히 인기예요.",
+  menu:[["점심 뷔페",160],["바칼라우 오븐구이",180],["포르투갈 소시지 구이",90]],
+  tip:"건물 자체가 볼거리. 스마트 캐주얼 차림을 권해요.",tags:["데이트","단체"]},
+ {id:"albergue",n:"알베르게 1601",o:"Albergue 1601",cat:["portuguese"],area:"north",lat:22.1978,lng:113.5442,p:3,pp:"300~500",em:"🌳",
+  desc:"성 라자로 성당 지구의 노란 고택과 큰 나무 아래 테라스. 마카오에서 가장 낭만적인 포르투갈 레스토랑으로 꼽혀요.",
+  menu:[["포르투갈식 해산물밥 (2인)",350],["문어구이",260],["세라두라",60]],
+  tip:"저녁 테라스는 예약 필수. 주변 골목 산책 코스와 묶어 보세요.",tags:["데이트"]},
+ {id:"antonio",n:"안토니오",o:"Antonio · 安東尼奧",cat:["portuguese"],area:"taipa",lat:22.1537,lng:113.5571,p:4,pp:"500~900",em:"🔥",
+  desc:"타이파 빌리지의 대표 고급 포르투갈 레스토랑. 테이블 앞에서 불을 붙이는 염소치즈 플람베 퍼포먼스가 유명해요.",
+  menu:[["염소치즈 꿀 플람베",150],["바칼라우 요리",300],["해산물밥 (2인)",420],["포르투갈 디저트",90]],
+  tip:"기념일 디너로 추천. 예약 필수, 와인 리스트가 훌륭해요.",tags:["데이트"]},
+ {id:"galo",n:"갈루",o:"Galo · 金雞餐廳",cat:["portuguese","macanese"],area:"taipa",lat:22.1535,lng:113.5560,p:2,pp:"150~300",em:"🐓",
+  desc:"수탉 간판의 아담한 가정식 포르투갈·마카니즈 식당. 타이파 빌리지 골목에서 부담 없이 들르기 좋아요.",
+  menu:[["아프리칸 치킨",150],["바칼라우 볶음",130],["포르투갈 수프 (Caldo Verde)",45]],
+  tip:"관야가 산책 중 식사 장소로 딱이에요.",tags:["가성비","단체"]},
+ {id:"fernando",n:"페르난도",o:"Fernando's · 法蘭度",cat:["portuguese"],area:"coloane",lat:22.1182,lng:113.5718,p:2,pp:"200~350",em:"🦪",
+  desc:"학사비치 해변 옆 전설적인 포르투갈 식당. 마늘 조개찜과 정어리구이, 상그리아 한 피처면 완벽한 오후가 돼요.",
+  menu:[["마늘 조개찜",150],["정어리구이",100],["새끼돼지구이",200],["상그리아 (피처)",200]],
+  tip:"예약 불가 · 현금만. 주말은 대기가 길어 평일 이른 시간 추천.",tags:["현금만","단체","줄서는집"]},
+ {id:"espaco",n:"이스파수 리스보아",o:"Espaço Lisboa · 里斯本地帶",cat:["portuguese"],area:"coloane",lat:22.1170,lng:113.5506,p:3,pp:"300~500",em:"🏡",
+  desc:"콜로안 빌리지 골목의 2층 가정집을 개조한 레스토랑. 포르투갈 시골집 같은 따뜻한 분위기가 매력이에요.",
+  menu:[["포르투갈식 해물밥",300],["바칼라우 아 브라스",180],["새끼돼지구이",260]],
+  tip:"로드 스토우즈 에그타르트와 함께 콜로안 반나절 코스로.",tags:["데이트"]},
+ {id:"lordstow",n:"로드 스토우즈 베이커리",o:"Lord Stow's Bakery · 安德魯餅店",cat:["tart"],area:"coloane",lat:22.1166,lng:113.5516,p:1,pp:"15~40",em:"🥧",
+  desc:"마카오식 에그타르트를 탄생시킨 원조 가게. 바삭한 페이스트리와 캐러멜라이즈된 커스터드가 갓 구워 나와요.",
+  menu:[["에그타르트 1개",12],["에그타르트 6개 박스",70],["커피",30]],
+  tip:"콜로안 본점이 원조. 베네시안 등 코타이에도 지점이 있어요. 따뜻할 때 바로 드세요.",tags:["가성비","줄서는집","혼밥"]},
+ {id:"margaret",n:"마가렛 카페 이 나타",o:"Margaret's Café e Nata · 瑪嘉烈蛋撻",cat:["tart","dessert"],area:"center",lat:22.1916,lng:113.5418,p:1,pp:"15~60",em:"🥐",
+  desc:"로드 스토우와 쌍벽을 이루는 에그타르트 명가. 세나도 광장 근처 골목 안에 숨어 있어 관광 중 들르기 좋아요.",
+  menu:[["에그타르트 1개",12],["참치·햄 샌드위치",35],["밀크티",25]],
+  tip:"골목 안쪽이라 지도 앱으로 찾아가세요. 오후엔 품절이 잦아요.",tags:["가성비","혼밥","줄서는집"]},
+ {id:"koikei",n:"꼬이께이 베이커리",o:"Koi Kei Bakery · 鉅記餅家",cat:["tart","street"],area:"taipa",lat:22.1532,lng:113.5566,p:1,pp:"30~150",em:"🍪",
+  desc:"마카오 기념품 1순위 아몬드 쿠키와 육포의 대표 브랜드. 시식이 넉넉하고 도시 곳곳에 지점이 있어요.",
+  menu:[["아몬드 쿠키 (박스)",60],["돼지고기 육포 (소포장)",100],["땅콩 캔디",40]],
+  tip:"선물용은 출국 직전에 사도 충분할 만큼 지점이 많아요.",tags:["가성비"]},
+ {id:"tlk",n:"타이레이로이께이",o:"Tai Lei Loi Kei · 大利來記",cat:["street"],area:"taipa",lat:22.1540,lng:113.5578,p:1,pp:"45~80",em:"🥪",
+  desc:"마카오 명물 쭈빠빠오(돼지갈비 번)의 대명사. 겉바속촉 번에 양념한 돼지갈비 한 장, 단순하지만 중독적이에요.",
+  menu:[["쭈빠빠오 (돼지갈비 번)",50],["홍콩식 밀크티",25]],
+  tip:"타이파 본점은 갓 구운 번이 나오는 오후에 줄이 길어요. 코타이 지점을 활용하면 편해요.",tags:["가성비","혼밥","줄서는집"]},
+ {id:"cunha",n:"관야가 먹자골목",o:"Rua do Cunha · 官也街",cat:["street","dessert"],area:"taipa",lat:22.1533,lng:113.5565,p:1,pp:"50~150",em:"🍢",
+  desc:"타이파 빌리지의 좁은 보행자 거리. 육포·쿠키 시식, 세라두라, 커리 어묵 등 길거리 간식을 한 번에 훑을 수 있어요.",
+  menu:[["커리 어묵 꼬치",30],["세라두라 컵",30],["육포 시식 후 구매","100~"]],
+  tip:"저녁 무렵 조명이 켜질 때 산책하기 좋아요.",tags:["가성비","혼밥","야식"]},
+ {id:"mokyikei",n:"목이께이",o:"Mok Yi Kei · 莫義記",cat:["dessert"],area:"taipa",lat:22.1534,lng:113.5568,p:1,pp:"25~50",em:"🍦",
+  desc:"두리안 아이스크림으로 유명한 관야가 디저트 노포. 두리안이 부담스럽다면 세라두라나 파파야 밀크를 골라요.",
+  menu:[["두리안 아이스크림",30],["세라두라",30],["파파야 밀크",30]],
+  tip:"두리안 초보라면 한 스쿱만 맛보기로!",tags:["가성비","혼밥"]},
+ {id:"ison",n:"이순 밀크",o:"Leitaria I Son · 義順牛奶公司",cat:["dessert"],area:"center",lat:22.1934,lng:113.5394,p:1,pp:"35~70",em:"🍮",
+  desc:"세나도 광장 바로 앞, 쌍피나이(이중 우유 푸딩)의 원조격 가게. 부드럽고 진한 우유 맛이 관광 중 당 충전에 최고예요.",
+  menu:[["쌍피나이 (雙皮奶)",38],["생강 우유 푸딩 (薑汁撞奶)",38],["햄 에그 토스트",25]],
+  tip:"따뜻한 것/차가운 것 선택 가능. 여름엔 차갑게 추천.",tags:["가성비","혼밥","야식"]},
+ {id:"lemoncello",n:"레몬첼로 젤라또",o:"Lemon Cello · 檸檬車露",cat:["dessert"],area:"center",lat:22.1937,lng:113.5397,p:1,pp:"35~60",em:"🍨",
+  desc:"세나도 광장 분수대 옆 인기 젤라또 가게. 진한 맛이 일품이라 성 바울 성당 유적 가는 길에 들르기 좋아요.",
+  menu:[["젤라또 1스쿱",35],["젤라또 2스쿱",50]],
+  tip:"맛 시식을 부탁하면 흔쾌히 줘요.",tags:["가성비"]},
+ {id:"honkee",n:"혼께이 커피",o:"Hon Kee Café · 漢記咖啡",cat:["dessert"],area:"coloane",lat:22.1210,lng:113.5543,p:1,pp:"25~60",em:"☕",
+  desc:"사장님이 수백 번 손으로 저어 만드는 '수타 커피(手打咖啡)'로 유명한 콜로안 노천 카페. 거품이 구름처럼 부드러워요.",
+  menu:[["수타 커피",25],["땅콩버터 토스트",20],["라면 + 계란",35]],
+  tip:"시내에서 떨어져 있어 콜로안 일정과 묶는 게 좋아요.",tags:["가성비","혼밥"]},
+ {id:"wongchikei",n:"웡치께이",o:"Wong Chi Kei · 黃枝記",cat:["noodle"],area:"center",lat:22.1931,lng:113.5392,p:1,pp:"60~120",em:"🍜",
+  desc:"1946년 창업한 세나도 광장의 완탕면 명가. 대나무로 반죽을 눌러 만드는 탱탱한 죽승면이 핵심이에요.",
+  menu:[["새우 완탕면",60],["새우알 비빔면 (蝦子撈麵)",70],["생선죽",55]],
+  tip:"국물 대신 비빔면(撈麵)으로 먹으면 면 맛이 더 살아요.",tags:["혼밥","가성비"]},
+ {id:"cheongkei",n:"쳉께이",o:"Cheong Kei · 祥記麵家",cat:["noodle"],area:"center",lat:22.1926,lng:113.5368,p:1,pp:"50~100",em:"🍝",
+  desc:"홍등가 거리 복륭신가(福隆新街)의 작은 국숫집. 새우알을 듬뿍 뿌린 비빔면 하나로 줄을 세우는 곳이에요.",
+  menu:[["새우알 비빔면 (蝦子撈麵)",60],["완탕면",55],["데친 채소 + 굴소스",30]],
+  tip:"자리가 좁아 합석이 기본. 회전이 빨라 기다릴 만해요.",tags:["혼밥","가성비","줄서는집"]},
+ {id:"sengcheong",n:"싱청 레스토랑",o:"Seng Cheong · 誠昌飯店",cat:["noodle","cantonese"],area:"taipa",lat:22.1538,lng:113.5575,p:3,pp:"200~500",em:"🦀",
+  desc:"게 한 마리를 통째로 끓여낸 '수이하이족(水蟹粥)' 게죽으로 유명한 타이파 식당. 진한 게 육수가 밥알에 스며들어요.",
+  menu:[["게죽 (水蟹粥, 2~3인)","시가 300~"],["간장 볶음면",80],["마늘 새우 볶음",180]],
+  tip:"게 크기·시가에 따라 가격 차이가 커요. 주문 전 가격을 꼭 확인하세요.",tags:["단체","야식"]},
+ {id:"longwa",n:"룽와 찻집",o:"Long Wa Tea House · 龍華茶樓",cat:["cantonese"],area:"north",lat:22.2046,lng:113.5468,p:1,pp:"60~150",em:"🫖",
+  desc:"붉은시장 근처 60년 넘은 레트로 찻집. 옛날 그대로의 인테리어에서 차 한 주전자와 딤섬으로 마카오 아침을 시작해요.",
+  menu:[["하가우 (새우 딤섬)",30],["샤오마이",30],["찻값 (1인)",20],["연잎밥",35]],
+  tip:"이른 아침부터 점심까지만 운영하는 편. 첫 방문이면 오전 9시 전후 추천.",tags:["가성비","혼밥"]},
+ {id:"fatsiulau",n:"팟시우라우",o:"Fat Siu Lau · 佛笑樓",cat:["cantonese","macanese"],area:"center",lat:22.1924,lng:113.5363,p:3,pp:"250~400",em:"🕊️",
+  desc:"1903년 문을 연 마카오에서 가장 오래된 서양식 식당 중 하나. 바삭한 비둘기 구이가 100년 넘은 시그니처예요.",
+  menu:[["로스트 비둘기",150],["갈릭 프라운",200],["커리 크랩","시가"]],
+  tip:"비둘기 구이는 1인 1마리가 정석. 생각보다 담백해요.",tags:["단체"]},
+ {id:"chankuongkei",n:"찬콩께이",o:"Chan Kuong Kei · 陳光記",cat:["cantonese"],area:"center",lat:22.1929,lng:113.5380,p:1,pp:"60~100",em:"🍗",
+  desc:"윤기 흐르는 거위구이·차슈를 밥 위에 올려주는 로스트 전문점. 빠르고 저렴하게 광둥식 한 끼를 해결하기 좋아요.",
+  menu:[["거위구이 덮밥 (燒鵝飯)",65],["차슈 덮밥 (叉燒飯)",60],["반반 덮밥 (雙拼飯)",75]],
+  tip:"점심 피크(12~13시)만 피하면 바로 앉을 수 있어요.",tags:["혼밥","가성비"]},
+ {id:"theeight",n:"디 에잇",o:"The Eight · 8餐廳 (Grand Lisboa)",cat:["fine","cantonese"],area:"center",lat:22.1902,lng:113.5432,p:4,pp:"600~1,500",em:"🐟",star:"미쉐린 스타",
+  desc:"그랜드 리스보아의 광둥 파인다이닝. 금붕어 모양 새우 딤섬 등 예술 작품 같은 딤섬으로 세계적인 명성을 얻었어요.",
+  menu:[["금붕어 새우 딤섬",100],["점심 딤섬 (1종)","80~150"],["디너 테이스팅 메뉴","1,800~"]],
+  tip:"점심 딤섬이 가장 가성비 좋은 입문 루트. 예약 필수.",tags:["데이트"]},
+ {id:"robuchon",n:"로부숑 오 돔",o:"Robuchon au Dôme · 天巢法國餐廳",cat:["fine"],area:"center",lat:22.1904,lng:113.5435,p:4,pp:"1,500~4,000",em:"🥂",star:"미쉐린 스타",
+  desc:"그랜드 리스보아 꼭대기 돔 안의 프렌치 레스토랑. 마카오 전경과 방대한 와인 셀러가 압도적이에요.",
+  menu:[["런치 코스","1,500~"],["디너 테이스팅 메뉴","3,500~"],["와인 페어링","별도"]],
+  tip:"스마트 드레스 코드. 런치가 디너 대비 절반 이하 가격이에요.",tags:["데이트"]},
+ {id:"timskitchen",n:"팀스 키친",o:"Tim's Kitchen · 桃花源小廚 (Hotel Lisboa)",cat:["fine","cantonese"],area:"center",lat:22.1893,lng:113.5441,p:4,pp:"600~1,500",em:"🦐",star:"미쉐린 스타",
+  desc:"재료 본연의 맛을 살리는 정갈한 광둥요리. 탱글한 크리스털 새우 요리가 대표 메뉴예요.",
+  menu:[["크리스털 새우 볶음",380],["게살 동과 찜",300],["제철 생선 찜","시가"]],
+  tip:"인원이 많을수록 다양한 요리를 맛볼 수 있어 2~4인 방문 추천.",tags:["데이트","단체"]},
+ {id:"winglei",n:"윙레이",o:"Wing Lei · 永利軒 (Wynn Macau)",cat:["fine","cantonese"],area:"center",lat:22.1883,lng:113.5455,p:4,pp:"700~2,000",em:"🐉",star:"미쉐린 스타",
+  desc:"윈 마카오의 화려한 용 장식 다이닝룸에서 즐기는 정통 광둥요리. 점심 딤섬이 특히 사랑받아요.",
+  menu:[["점심 딤섬 (1종)","80~"],["차슈 바비큐",280],["북경오리","시가"]],
+  tip:"윈 호텔 분수쇼 시간과 맞춰 방문해 보세요.",tags:["데이트","단체"]},
+ {id:"jadedragon",n:"제이드 드래곤",o:"Jade Dragon · 譽瓏軒 (City of Dreams)",cat:["fine","cantonese"],area:"cotai",lat:22.1488,lng:113.5625,p:4,pp:"1,200~3,000",em:"🐲",star:"미쉐린 스타",
+  desc:"리치 나무 숯불로 구운 차슈가 전설인 코타이의 광둥 파인다이닝. 마카오 미식 여행의 정점으로 꼽혀요.",
+  menu:[["리치나무 숯불 차슈",420],["점심 딤섬 (1종)","100~"],["테이스팅 메뉴","2,500~"]],
+  tip:"수주 전 예약 필수. 점심 딤섬이면 부담이 줄어요.",tags:["데이트"]},
+ {id:"sichuanmoon",n:"쓰촨 문",o:"Sichuan Moon · 川江月 (Wynn Palace)",cat:["fine"],area:"cotai",lat:22.1530,lng:113.5735,p:4,pp:"1,500~3,500",em:"🌶️",star:"미쉐린 스타",
+  desc:"쓰촨 요리를 파인다이닝으로 재해석한 윈 팰리스의 레스토랑. 섬세한 매운맛과 화려한 플레이팅이 특징이에요.",
+  menu:[["쓰촨 테이스팅 코스","2,000~"],["단단면","150~"],["마파두부","280~"]],
+  tip:"매운 정도 조절 가능. 윈 팰리스 케이블카도 함께 즐겨보세요.",tags:["데이트"]},
+ {id:"goldenpeacock",n:"골든 피콕",o:"Golden Peacock · 皇雀 (The Venetian)",cat:["fine"],area:"cotai",lat:22.1476,lng:113.5600,p:3,pp:"400~800",em:"🦚",star:"미쉐린 스타",
+  desc:"베네시안 안의 인도 요리 레스토랑. 미쉐린 스타 레스토랑 중 비교적 합리적인 가격으로 유명해요.",
+  menu:[["런치 탈리 세트",300],["버터 치킨",200],["탄두리 모둠",260]],
+  tip:"카레를 좋아한다면 미쉐린 입문용으로 최고의 선택.",tags:["데이트"]}
+];
+
+// ---------- state ----------
+const S = {cat:null,situ:null,area:"all",price:0,sort:"pick",q:"",favOnly:false};
+let favs = new Set();
+try{favs = new Set(JSON.parse(localStorage.getItem("ga-macau-fav")||"[]"))}catch(e){}
+const saveFav=()=>{try{localStorage.setItem("ga-macau-fav",JSON.stringify([...favs]))}catch(e){};document.getElementById("favCount").textContent=favs.size};
+
+const $=s=>document.querySelector(s);
+function fmtWon(m){return "≈ "+(Math.round(m*RATE/1000)*1000).toLocaleString("ko-KR")+"원"}
+function priceCell(v){return typeof v==="number"?["MOP "+v.toLocaleString(),fmtWon(v)]:["MOP "+v,""]}
+const lo=r=>parseInt(r.pp.replace(/,/g,""),10);
+const gmap=r=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(r.o.split("·")[0].trim()+" Macau");
+function dist(a,b){const R6=6371e3,t=Math.PI/180,dl=(b.lat-a.lat)*t,dg=(b.lng-a.lng)*t;const x=Math.sin(dl/2)**2+Math.cos(a.lat*t)*Math.cos(b.lat*t)*Math.sin(dg/2)**2;return 2*R6*Math.asin(Math.sqrt(x))}
+function howFar(m){const walk=Math.max(1,Math.round(m*1.3/75));return walk<=25?`도보 ${walk}분`:`택시 약 ${Math.max(5,Math.round(m*1.4/350))}분`}
+
+// ---------- build static UI ----------
+$("#situ").innerHTML=SITU.map(s=>`<button class="chip" data-s="${s}">${{혼밥:"🙋",가성비:"💰",데이트:"🌙",단체:"👨‍👩‍👧",줄서는집:"🔥",현금만:"💵",야식:"🌃"}[s]} ${s}</button>`).join("");
+$("#topics").innerHTML=Object.entries(CATS).map(([k,c])=>`<button class="topic glass" data-c="${k}" style="--c:${c.c}"><span class="em">${c.em}</span><b>${c.n}</b><small>${c.d} · ${R.filter(r=>r.cat.includes(k)).length}곳</small></button>`).join("");
+$("#area").innerHTML=`<option value="all">전체 지역</option>`+Object.entries(AREAS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+$("#legend").innerHTML=Object.entries(CATS).map(([k,c])=>`<span><i style="background:${c.c}"></i>${c.n}</span>`).join("");
+
+// ---------- map ----------
+const B={n:22.212,s:22.108,w:113.524,e:113.584},W=360,H=600;
+const px=r=>[(r.lng-B.w)/(B.e-B.w)*W,(B.n-r.lat)/(B.n-B.s)*H];
+function drawMap(items){
+  const land=[["마카오 반도",22.196,113.542,52,78],["타이파",22.157,113.558,74,30],["코타이",22.144,113.562,62,26],["콜로안",22.120,113.558,78,48]];
+  const ids=new Set(items.map(r=>r.id));
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="마카오 맛집 지도"><defs><filter id="gl"><feGaussianBlur stdDeviation="3"/></filter></defs>`;
+  for(let i=0;i<W;i+=30)s+=`<line x1="${i}" y1="0" x2="${i}" y2="${H}" stroke="rgba(255,255,255,.04)"/>`;
+  for(let i=0;i<H;i+=30)s+=`<line x1="0" y1="${i}" x2="${W}" y2="${i}" stroke="rgba(255,255,255,.04)"/>`;
+  land.forEach(([n,la,ln,rx,ry])=>{const[x,y]=px({lat:la,lng:ln});s+=`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.16)"/><text x="${x}" y="${y-ry-8}" fill="rgba(255,255,255,.55)" font-size="12" text-anchor="middle" font-weight="600">${n}</text>`});
+  // bridges
+  const b1=px({lat:22.186,lng:113.548}),b2=px({lat:22.165,lng:113.553});
+  s+=`<line x1="${b1[0]}" y1="${b1[1]}" x2="${b2[0]}" y2="${b2[1]}" stroke="rgba(255,255,255,.12)" stroke-dasharray="3 4"/>`;
+  R.forEach(r=>{const[x,y]=px(r),c=CATS[r.cat[0]].c,on=ids.has(r.id);
+    s+=`<g opacity="${on?1:.15}">${on?`<circle cx="${x}" cy="${y}" r="9" fill="${c}" opacity=".45" filter="url(#gl)"/>`:""}<circle class="dot" data-id="${r.id}" cx="${x}" cy="${y}" r="5.5" fill="${c}" stroke="#0b0c12" stroke-width="1.5"/></g>`});
+  s+=`</svg>`;
+  const m=$("#map"),tip=$("#maptip");m.innerHTML=s;m.appendChild(tip);
+  m.querySelectorAll(".dot").forEach(d=>{
+    d.addEventListener("click",()=>openDetail(d.dataset.id));
+    d.addEventListener("mouseenter",e=>{const r=R.find(x=>x.id===d.dataset.id),rect=m.getBoundingClientRect(),[x,y]=px(r);tip.textContent=`${CATS[r.cat[0]].em} ${r.n}`;tip.style.left=(x/W*rect.width)+"px";tip.style.top=(y/H*rect.height)+"px";tip.style.opacity=1});
+    d.addEventListener("mouseleave",()=>tip.style.opacity=0);
+  });
+}
+
+// ---------- list ----------
+function filtered(){
+  const q=S.q.trim().toLowerCase();
+  let a=R.filter(r=>(!S.cat||r.cat.includes(S.cat))&&(!S.situ||r.tags.includes(S.situ))&&(S.area==="all"||r.area===S.area)&&(!S.price||r.p===+S.price)&&(!S.favOnly||favs.has(r.id))&&
+    (!q||[r.n,r.o,r.desc,AREAS[r.area],...r.cat.map(c=>CATS[c].n),...r.menu.map(m=>m[0]),...r.tags].join(" ").toLowerCase().includes(q)));
+  if(S.sort==="low")a.sort((x,y)=>lo(x)-lo(y));if(S.sort==="high")a.sort((x,y)=>lo(y)-lo(x));
+  return a;
+}
+function render(){
+  const a=filtered();
+  const parts=[S.favOnly?"♥ 찜한":"",S.cat?CATS[S.cat].em+" "+CATS[S.cat].n:"",S.situ?"#"+S.situ:"",S.area!=="all"?AREAS[S.area]:""].filter(Boolean);
+  $("#resTitle").textContent=parts.length?parts.join(" · ")+" 맛집":"마카오 전체 맛집";
+  $("#count").textContent=`${a.length}곳`;
+  $("#list").innerHTML=a.length?a.map(r=>`
+   <div class="card glass" data-id="${r.id}" tabindex="0" role="button" aria-label="${r.n} 상세 보기">
+     <button class="fav ${favs.has(r.id)?"on":""}" data-f="${r.id}" aria-label="찜하기">${favs.has(r.id)?"♥":"♡"}</button>
+     <div class="c-top"><div class="sig">${r.em}</div><div><h3>${r.n}</h3><div class="o">${r.o}</div></div></div>
+     <div class="meta">${r.star?`<span class="tag star">⭐ ${r.star}</span>`:""}<span class="tag area">📍 ${AREAS[r.area]}</span>${r.cat.map(c=>`<span class="tag">${CATS[c].n}</span>`).join("")}</div>
+     <p class="desc">${r.desc}</p>
+     <div class="mini-menu">${r.menu.slice(0,2).map(m=>`<div class="mm"><span>${m[0]}</span><span>${priceCell(m[1])[0]}</span></div>`).join("")}</div>
+     <div class="c-foot"><span>1인 <b>MOP ${r.pp}</b> · ${PL[r.p]}</span><span class="more">메뉴·주변맛집 →</span></div>
+   </div>`).join(""):`<div class="empty glass">조건에 맞는 식당이 없어요 🥲<br><br><button class="btn" onclick="resetAll()">필터 초기화</button></div>`;
+  drawMap(a);
+  document.querySelectorAll(".topic").forEach(t=>t.classList.toggle("on",t.dataset.c===S.cat));
+  document.querySelectorAll(".chip").forEach(t=>t.classList.toggle("on",t.dataset.s===S.situ));
+  $("#favToggle").style.outline=S.favOnly?"2px solid #ffb36b":"none";
+}
+
+// ---------- detail ----------
+function openDetail(id){
+  const r=R.find(x=>x.id===id);if(!r)return;
+  const near=R.filter(x=>x.id!==r.id).map(x=>({x,d:dist(r,x)})).sort((a,b)=>a.d-b.d).slice(0,4);
+  $("#sheet").innerHTML=`
+   <button class="x" id="close" aria-label="닫기">✕</button>
+   <div class="d-head"><div class="sig">${r.em}</div><div><h2>${r.n}</h2><div class="o">${r.o}</div></div></div>
+   <div class="meta">${r.star?`<span class="tag star">⭐ ${r.star}</span>`:""}<span class="tag area">📍 ${AREAS[r.area]}</span>${r.cat.map(c=>`<span class="tag">${CATS[c].em} ${CATS[c].n}</span>`).join("")}${r.tags.map(t=>`<span class="tag">#${t}</span>`).join("")}</div>
+   <p class="d-desc">${r.desc}</p>
+   <div class="d-grid">
+     <div class="kv"><small>1인 예산</small><b>MOP ${r.pp}</b> <span style="color:var(--ink3);font-size:13px">${fmtWon(lo(r))}~</span></div>
+     <div class="kv"><small>가격대</small><b>${PL[r.p]}</b> <span style="color:var(--ink3);font-size:13px">${["","저렴","보통","고급","최고급"][r.p]}</span></div>
+   </div>
+   <div class="d-sec"><h4>대표 메뉴 & 가격</h4><div class="menu-t">${r.menu.map(m=>{const[p,k]=priceCell(m[1]);return `<div class="mrow"><span>${m[0]}</span><span class="p">${p}</span><span class="k">${k}</span></div>`}).join("")}</div></div>
+   <div class="d-sec"><h4>미식가 팁</h4><div class="tipbox">💡 ${r.tip}</div></div>
+   <div class="d-sec"><h4>근처에서 이어 먹기 · 주변 맛집</h4><div class="near">${near.map(({x,d})=>`<button class="nb" data-id="${x.id}"><div class="sig">${x.em}</div><div><b>${x.n}</b><small>${CATS[x.cat[0]].n} · ${howFar(d)} · MOP ${x.pp}</small></div></button>`).join("")}</div></div>
+   <div class="actions">
+     <a class="btn pri" href="${gmap(r)}" target="_blank" rel="noopener">🗺️ 구글 지도에서 열기 · 길찾기</a>
+     <button class="btn" id="dFav">${favs.has(r.id)?"♥ 찜 해제":"♡ 찜하기"}</button>
+     <button class="btn" id="dShare">🔗 이름 복사</button>
+   </div>`;
+  $("#scrim").classList.add("open");$("#sheet").classList.add("open");$("#sheet").scrollTop=0;
+  $("#close").onclick=closeDetail;
+  $("#sheet").querySelectorAll(".nb").forEach(b=>b.onclick=()=>openDetail(b.dataset.id));
+  $("#dFav").onclick=()=>{toggleFav(r.id);openDetail(r.id)};
+  $("#dShare").onclick=()=>{const t=`${r.n} (${r.o}) - ${AREAS[r.area]}`;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("식당 이름을 복사했어요"),()=>toast(t))};
+}
+function closeDetail(){$("#scrim").classList.remove("open");$("#sheet").classList.remove("open")}
+function toggleFav(id){favs.has(id)?favs.delete(id):favs.add(id);saveFav();toast(favs.has(id)?"찜 목록에 담았어요 ♥":"찜에서 뺐어요");render()}
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),1800)}
+function resetAll(){Object.assign(S,{cat:null,situ:null,area:"all",price:0,sort:"pick",q:"",favOnly:false});$("#q").value="";$("#area").value="all";$("#price").value="0";$("#sort").value="pick";render()}
+const goResults=()=>$("#results").scrollIntoView({behavior:"smooth",block:"start"});
+
+// ---------- events ----------
+$("#topics").onclick=e=>{const b=e.target.closest(".topic");if(!b)return;S.cat=S.cat===b.dataset.c?null:b.dataset.c;render();goResults()};
+$("#situ").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;S.situ=S.situ===b.dataset.s?null:b.dataset.s;render();goResults()};
+$("#area").onchange=e=>{S.area=e.target.value;render()};
+$("#price").onchange=e=>{S.price=e.target.value;render()};
+$("#sort").onchange=e=>{S.sort=e.target.value;render()};
+$("#reset").onclick=resetAll;
+$("#q").oninput=e=>{S.q=e.target.value;render()};
+$("#q").onkeydown=e=>{if(e.key==="Enter")goResults()};
+$("#favToggle").onclick=()=>{S.favOnly=!S.favOnly;if(S.favOnly&&!favs.size)toast("아직 찜한 곳이 없어요. 카드의 ♡를 눌러보세요");render();goResults()};
+$("#list").onclick=e=>{const f=e.target.closest(".fav");if(f){e.stopPropagation();toggleFav(f.dataset.f);return}const c=e.target.closest(".card");if(c)openDetail(c.dataset.id)};
+$("#list").onkeydown=e=>{if(e.key==="Enter"&&e.target.classList.contains("card"))openDetail(e.target.dataset.id)};
+$("#scrim").onclick=closeDetail;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDetail();if(e.key==="/"&&document.activeElement!==$("#q")){e.preventDefault();$("#q").focus()}});
+saveFav();render();
+</script>
+</body>
+</html>
